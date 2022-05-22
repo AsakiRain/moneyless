@@ -1,7 +1,4 @@
 import javax.swing.*;
-
-import org.sqlite.core.DB;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,9 +34,8 @@ class LoginFrame extends JFrame implements ActionListener {
         if (b_cancel == e.getSource()) {
             System.exit(0);
         } else if (b_ok == e.getSource()) {
-            DBUtils db = new DBUtils();
+            UseDB db = new UseDB();
             db.init();
-            db.check();
             MainFrame mf = new MainFrame(t_user.getText().trim());
             mf.setResizable(false);
             mf.setSize(600, 580);

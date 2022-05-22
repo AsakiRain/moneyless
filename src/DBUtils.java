@@ -1,17 +1,16 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class DBUtils {
     Connection c = null;
 
     public DBUtils() {
         try {
-            Class.forName("../lib/sqlite-jdbc-3.36.0.3.jar");
             // create a database connection
-            c = DriverManager.getConnection("jdbc:sqlite:master.db");
+            c = DriverManager.getConnection("jdbc:sqlite:moneyManager.db");
         } catch (SQLException e) {
             // if the error message is "out of memory",
             // it probably means no database file is found
@@ -20,15 +19,11 @@ public class DBUtils {
         System.out.println("Opened database successfully");
     }
 
-    public void init() {
+    public void commit(String sql) {
         try {
             Statement s = c.createStatement();
-            s.setQueryTimeout(10); // set timeout to 30 sec.
-            String sql = "CREATE TABLE IF NOT EXISTS users" +
-                    "(account STRING PRIMARY KEY NOT NULL," +
-                    "password STRING NOT NULL);";
-            s.executeUpdate(sql);
-            sql = "INSERT INTO users values('hdu', '123');";
+            s.setQueryTimeout(10);
+
             s.executeUpdate(sql);
             s.close();
         } catch (SQLException e) {
@@ -36,26 +31,34 @@ public class DBUtils {
         }
     }
 
+    public List query(String sql) {
+        List list = new ArrayList();
+        try {
+            Statement s = c.createStatement();
+            s.setQueryTimeout(10);
+
+            ResultSet rs = s.executeQuery(sql);
+            ResultSetMetaData rsmd = rs.getMetaData();
+
+            int colCount = rsmd.getColumnCount();
+
+            while (rs.next()) {
+                Map rowData = new HashMap(colCount);
+                for (int i = 1; i <= colCount; i++) {
+                    rowData.put(rsmd.getColumnName(i), rs.getObject(i));
+                }
+                list.add(rowData);
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+        return list;
+    }
+
     public void close() {
         try {
             if (c != null)
                 c.close();
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-        }
-    }
-
-    public void check() {
-        try {
-            Statement s = c.createStatement();
-            s.setQueryTimeout(10); // set timeout to 30 sec.
-            String sql = "SELECT * FROM users;";
-            ResultSet res = s.executeQuery(sql);
-            while (res.next()) {
-                // read the result set
-                System.out.println("account = " + res.getString("account"));
-                System.out.println("password = " + res.getString("password"));
-            }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
         }
