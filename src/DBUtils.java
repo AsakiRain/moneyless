@@ -55,10 +55,23 @@ public class DBUtils {
         return list;
     }
 
+    public boolean hasTable(String tableName) {
+        List res = this.query("SELECT count(*) " +
+                "FROM sqlite_master " +
+                "WHERE type='table' " +
+                "AND name='" + tableName + "';");
+
+        Map data = (Map) res.get(0);
+        int LICount = Integer.parseInt(data.get("count(*)").toString());
+        return LICount != 0;
+    }
+
+
     public void close() {
         try {
-            if (c != null)
+            if (c != null) {
                 c.close();
+            }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
         }

@@ -4,7 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 // 修改密码界面
-class ModifyPwdFrame extends JFrame implements ActionListener {
+class ModifyPwdFrame extends JFrame implements ActionListener, GlobalDB {
     private JLabel l_oldPWD, l_newPWD, l_newPWDAgain;
     private JPasswordField t_oldPWD, t_newPWD, t_newPWDAgain;
     private JButton b_ok, b_cancel;
@@ -32,16 +32,33 @@ class ModifyPwdFrame extends JFrame implements ActionListener {
         add(b_cancel);
         b_ok.addActionListener(this);
         b_cancel.addActionListener(this);
+        t_newPWD.addActionListener(this);
+        t_newPWDAgain.addActionListener(this);
     }
 
     public void actionPerformed(ActionEvent e) {
         if (b_cancel == e.getSource()) {
-            // 添加代码
-        } else if (b_ok == e.getSource()) { // 修改密码
-            // 添加代码
+            dispose();
+        } else if (b_ok == e.getSource() ||
+                t_newPWD == e.getSource() ||
+                t_newPWDAgain == e.getSource()) { // 修改密码
+            if (String.valueOf(t_newPWD.getPassword()).length() != 0) {
+                if (String.valueOf(t_newPWD.getPassword())
+                        .equals(String.valueOf(t_newPWDAgain.getPassword()))) {
+                    boolean res = db.updatePassword(this.username,
+                            String.valueOf(t_oldPWD.getPassword()),
+                            String.valueOf(t_newPWD.getPassword()));
+                    if (res) {
+                        JOptionPane.showMessageDialog(this, "密码修改成功", "成功", JOptionPane.PLAIN_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(this, "原密码不正确", "失败", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "两次密码不一致", "失败", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "新密码不能为空", "失败", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 }
-
-// JOptionPane.showMessageDialog(null,"用户名密码出错", "警告",
-// //JOptionPane.ERROR_MESSAGE);

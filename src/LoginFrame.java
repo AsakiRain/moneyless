@@ -4,7 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 // 登录界面
-class LoginFrame extends JFrame implements ActionListener {
+class LoginFrame extends JFrame implements ActionListener, GlobalDB {
     private JLabel l_user, l_pwd; // 用户名标签，密码标签
     private JTextField t_user;// 用户名文本框
     private JPasswordField t_pwd; // 密码文本框
@@ -28,20 +28,26 @@ class LoginFrame extends JFrame implements ActionListener {
         // 为按钮添加监听事件
         b_ok.addActionListener(this);
         b_cancel.addActionListener(this);
+        t_user.addActionListener(this);
+        t_pwd.addActionListener(this);
     }
 
     public void actionPerformed(ActionEvent e) {
         if (b_cancel == e.getSource()) {
             System.exit(0);
-        } else if (b_ok == e.getSource()) {
-            UseDB db = new UseDB();
-            db.init();
-            MainFrame mf = new MainFrame(t_user.getText().trim());
-            mf.setResizable(false);
-            mf.setSize(600, 580);
-            Dimension screen = mf.getToolkit().getScreenSize();
-            mf.setLocation((screen.width - mf.getSize().width) / 2, (screen.height - mf.getSize().height) / 2);
-            mf.setVisible(true);
+        } else if (b_ok == e.getSource() || t_user == e.getSource() || t_pwd == e.getSource()) {
+            if (db.auth(t_user.getText(), String.valueOf(t_pwd.getPassword()))) {
+                MainFrame mf = new MainFrame(t_user.getText().trim());
+                mf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                mf.setResizable(false);
+                mf.setSize(600, 580);
+                Dimension screen = mf.getToolkit().getScreenSize();
+                mf.setLocation((screen.width - mf.getSize().width) / 2, (screen.height - mf.getSize().height) / 2);
+                mf.setVisible(true);
+                dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, "用户名密码出错", "警告", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 }
