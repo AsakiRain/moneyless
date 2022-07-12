@@ -12,7 +12,7 @@ public class MoneyManager implements GlobalDB{
         lf.setLocation((screen.width - lf.getSize().width) / 2, (screen.height - lf.getSize().height) / 2);
         // 界面大小不可调整
         lf.setResizable(false);
-        lf.setSize(400, 120);
+        lf.setSize(400, 140);
         lf.setVisible(true);
     }
 }

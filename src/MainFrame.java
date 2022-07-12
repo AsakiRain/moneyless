@@ -98,7 +98,7 @@ class MainFrame extends JFrame implements ActionListener, GlobalDB {
         if (temp == mI[0]) {
             ModifyPwdFrame mpf = new ModifyPwdFrame(username);
             mpf.setResizable(false);
-            mpf.setSize(240, 160);
+            mpf.setSize(200, 240);
             Dimension screen = mpf.getToolkit().getScreenSize();
             mpf.setLocation((screen.width - mpf.getSize().width) / 2, (screen.height - mpf.getSize().height) / 2);
             mpf.setVisible(true);
